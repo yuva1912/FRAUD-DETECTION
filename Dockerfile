@@ -20,4 +20,4 @@ ENV PYTHONPATH=/app
 EXPOSE 8000
 
 # Run Gunicorn server with dynamic PORT for Render
-CMD gunicorn --pythonpath /app -w 4 -b 0.0.0.0:${PORT:-8000} backend.app:app
+CMD gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} backend.app:app
