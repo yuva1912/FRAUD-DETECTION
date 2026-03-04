@@ -14,9 +14,10 @@ COPY . .
 # Environment defaults (can be overridden)
 ENV FLASK_ENV=production
 ENV FLASK_APP=backend.app
+ENV PYTHONPATH=/app
 
 # Expose port (Render will assign $PORT)
 EXPOSE 8000
 
 # Run Gunicorn server with dynamic PORT for Render
-CMD gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} backend.app:app
+CMD gunicorn --pythonpath /app -w 4 -b 0.0.0.0:${PORT:-8000} backend.app:app
