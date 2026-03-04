@@ -19,5 +19,5 @@ ENV PYTHONPATH=/app
 # Expose port (Render will assign $PORT)
 EXPOSE 8000
 
-# Run Python with gunicorn - better error output
-CMD python -m gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} backend.app:app
+# Run Python with gunicorn using start_server shim to ensure imports work
+CMD python -m gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} start_server:app
