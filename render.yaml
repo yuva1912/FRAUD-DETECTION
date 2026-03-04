@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: spam-mail-app
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: FLASK_SECRET
+        generateValue: true
+      - key: FLASK_ENV
+        value: production

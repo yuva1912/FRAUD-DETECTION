@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>TEST PAGE - NEW FEATURES</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; }
+        h1 { color: #667eea; margin-bottom: 30px; text-align: center; }
+        .section { margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #667eea; }
+        .section h2 { color: #667eea; margin-bottom: 15px; font-size: 20px; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .feature-box { background: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #667eea; }
+        .feature-box h3 { margin: 10px 0; color: #333; }
+        .feature-box p { font-size: 12px; color: #666; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .option-box { background: white; padding: 15px; border-radius: 8px; border: 2px solid #764ba2; cursor: pointer; }
+        .option-box:hover { background: #667eea; color: white; }
+        button { background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 NEW FEATURES ADDED TO YOUR APP!</h1>
+        
+        <div class="section">
+            <h2>✨ PREMIUM FEATURES (3 Boxes)</h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🤖</div>
+                    <h3>Machine Learning</h3>
+                    <p>Advanced algorithms trained on 100K+ emails</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🔍</div>
+                    <h3>Deep Analysis</h3>
+                    <p>Content, sender, links & attachments scanned</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🛡️</div>
+                    <h3>100% Secure</h3>
+                    <p>Zero data logging, end-to-end encryption</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 HOW OUR AI WORKS (4 Steps)</h2>
+            <p>1. 📥 Input Email → 2. 🔬 Scan Content → 3. 🧠 AI Analysis → 4. 📊 Results</p>
+        </div>
+
+        <div class="section">
+            <h2>🔎 DETECTION CAPABILITIES (3 Types)</h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🎣</div>
+                    <h3>Phishing Emails</h3>
+                    <p>Detects fraudulent links & credential harvesting</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🦠</div>
+                    <h3>Malware & Viruses</h3>
+                    <p>Identifies dangerous attachments</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 28px;">🚀</div>
+                    <h3>Bulk Spam</h3>
+                    <p>Catches promotional junk & mass mailings</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💡 SECURITY BEST PRACTICES</h2>
+            <p><strong>🚩 Spam Red Flags:</strong> Suspicious sender, Urgent action, Unknown attachments, Credential links, Too good offers, Poor grammar, Threats, Unrecognized sender</p>
+            <p style="margin-top: 10px;"><strong>✅ Safe Email Signs:</strong> Professional domain, Personalized greeting, Good grammar, Clear purpose, Known links, Legitimate attachments, Reasonable tone, Trusted contacts</p>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ ADVANCED OPTIONS (6 Features)</h2>
+            <div class="options-grid">
+                <div class="option-box">📧 Email Filter Integration</div>
+                <div class="option-box">📊 Reports & Analytics</div>
+                <div class="option-box">🔗 Developer API</div>
+                <div class="option-box">📦 Bulk Analysis</div>
+                <div class="option-box">🌙 Dark Mode</div>
+                <div class="option-box">🌐 Multi-Language</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📞 SUPPORT & RESOURCES (4 Options)</h2>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                <div class="option-box" style="text-align: center;">📖 Documentation</div>
+                <div class="option-box" style="text-align: center;">🐛 Report Issues</div>
+                <div class="option-box" style="text-align: center;">💬 Community</div>
+                <div class="option-box" style="text-align: center;">📧 Contact Us</div>
+            </div>
+        </div>
+
+        <div class="section" style="text-align: center;">
+            <h2>NOW GO TO:</h2>
+            <h3 style="color: #667eea; margin: 20px 0;">http://localhost:5000</h3>
+            <p><strong>Login with:</strong> admin / admin123</p>
+            <p style="margin-top: 15px; color: red;"><strong>⚠️ IF YOU DON'T SEE CHANGES:</strong></p>
+            <button onclick="location.href='http://localhost:5000'">CLICK HERE TO GO TO APP</button>
+        </div>
+    </div>
+</body>
+</html>

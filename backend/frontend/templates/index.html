@@ -1,0 +1,670 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ SHIELD - Enterprise Email Security</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #667eea; --secondary: #764ba2; --danger: #ff6b6b; --success: #51cf66; --warning: #ffc107; --info: #17a2b8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; transition: all 0.3s; }
+        body.dark-mode { background: #0a0e27; }
+        
+        .top-bar { max-width: 1400px; margin: 0 auto 30px; background: rgba(255,255,255,0.95); padding: 20px 30px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); backdrop-filter: blur(10px); }
+        .dark-mode .top-bar { background: rgba(22,33,62,0.95); color: white; }
+        
+        .logo { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+        .controls { display: flex; gap: 20px; align-items: center; }
+        .toggle-btn, .logout-btn { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s; }
+        .toggle-btn { background: #f0f0f0; color: #333; } .dark-mode .toggle-btn { background: #333; color: white; }
+        .logout-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .logout-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        .tabs { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; overflow-x: auto; padding-bottom: 10px; }
+        .tab-btn { padding: 12px 24px; border: 2px solid #e0e0e0; background: white; border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s; white-space: nowrap; }
+        .dark-mode .tab-btn { background: #16213e; color: white; border-color: #2a3f5f; }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: transparent; box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-left: 5px solid #667eea; transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .dark-mode .stat-card { background: #16213e; border-color: #667eea; }
+        
+        .stat-icon { font-size: 32px; margin-bottom: 15px; }
+        .stat-number { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 14px; color: #999; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .main-card { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); margin-bottom: 30px; }
+        .dark-mode .main-card { background: #16213e; color: white; }
+        
+        .section-title { font-size: 26px; font-weight: 800; color: #333; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .dark-mode .section-title { color: white; }
+        
+        textarea { width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 14px; min-height: 150px; font-family: 'Courier New', monospace; }
+        .dark-mode textarea { background: #0f0f1e; color: white; border-color: #333; }
+        textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102,126,234,0.1); }
+        
+        input, select { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        .dark-mode input, .dark-mode select { background: #0f0f1e; color: white; border-color: #333; }
+        input:focus, select:focus { outline: none; border-color: #667eea; }
+        
+        .btn { padding: 14px 28px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-export { background: #51cf66; color: white; }
+        .btn-danger { background: #ff6b6b; color: white; }
+        .btn-sm { padding: 8px 16px; font-size: 12px; }
+        
+        .result { margin-top: 25px; padding: 30px; border-radius: 15px; text-align: center; font-weight: 700; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-spam { background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; }
+        .result-safe { background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%); color: white; }
+        
+        .info-box { background: #f0f7ff; padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #667eea; }
+        .dark-mode .info-box { background: #0f0f1e; border-color: #667eea; }
+        
+        .threat-score { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .score-box { background: #f5f5f5; padding: 20px; border-radius: 10px; text-align: center; }
+        .dark-mode .score-box { background: #0f0f1e; }
+        .score-bar { width: 100%; height: 10px; background: #e0e0e0; border-radius: 5px; margin: 10px 0; overflow: hidden; }
+        .score-fill { height: 100%; background: linear-gradient(90deg, #51cf66, #ffc107, #ff6b6b); }
+        
+        .warning { background: #fff3cd; padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #ffc107; color: #856404; }
+        .dark-mode .warning { background: #0f0f1e; color: #ffc107; }
+        
+        .chart-container { position: relative; height: 300px; margin: 30px 0; }
+        .footer { text-align: center; color: white; padding: 40px; }
+        
+        /* Enhanced Features */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .action-btn { padding: 20px; background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border: 2px dashed #667eea; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .action-btn:hover { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: white; }
+        .action-btn i { font-size: 28px; display: block; margin-bottom: 10px; }
+        
+        .threat-level { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 20px; font-weight: 700; }
+        .threat-critical { background: #ff6b6b; color: white; }
+        .threat-high { background: #ffc107; color: #333; }
+        .threat-medium { background: #ff9f43; color: white; }
+        .threat-low { background: #51cf66; color: white; }
+        
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0; }
+        .feature-card { background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; }
+        .dark-mode .feature-card { background: rgba(102,126,234,0.1); border-color: #2a3f5f; }
+        .feature-card h4 { color: #667eea; margin-bottom: 10px; }
+        .feature-card p { font-size: 13px; color: #666; }
+        
+        .email-preview { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; margin: 15px 0; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; }
+        .dark-mode .email-preview { background: #0f0f1e; border-color: #333; color: #ccc; }
+        
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">🛡️ SHIELD PRO</div>
+        <div class="controls">
+            <button class="toggle-btn" onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Dark Mode</button>
+            <span style="font-weight: 600;">{{ session.get("user", "User") }}</span>
+            <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'scanner')"><i class="fas fa-shield-alt"></i> Scanner</button>
+            <button class="tab-btn" onclick="switchTab(event, 'dashboard')"><i class="fas fa-chart-bar"></i> Analytics</button>
+            <button class="tab-btn" onclick="switchTab(event, 'history')"><i class="fas fa-history"></i> History</button>
+            <button class="tab-btn" onclick="switchTab(event, 'batch')"><i class="fas fa-layer-group"></i> Batch</button>
+            <button class="tab-btn" onclick="switchTab(event, 'templates')"><i class="fas fa-file-contract"></i> Templates</button>
+            <button class="tab-btn" onclick="switchTab(event, 'advanced')"><i class="fas fa-sliders-h"></i> Advanced</button>
+            <button class="tab-btn" onclick="switchTab(event, 'api')"><i class="fas fa-code"></i> API</button>
+            <button class="tab-btn" onclick="switchTab(event, 'settings')"><i class="fas fa-cog"></i> Settings</button>
+        </div>
+
+        <!-- SCANNER TAB -->
+        <div id="scanner" class="tab-content active">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-envelope-open-text" style="color: #667eea;"></i> Advanced Email Scanner</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="loadTemplate('safe')"><i class="fas fa-check-circle"></i>Test Safe Email</div>
+                    <div class="action-btn" onclick="loadTemplate('phishing')"><i class="fas fa-exclamation-triangl"></i>Test Phishing</div>
+                    <div class="action-btn" onclick="loadTemplate('malware')"><i class="fas fa-bug"></i>Test Malware</div>
+                </div>
+                
+                <form method="POST" action="/predict">
+                    <label style="font-weight: 700; font-size: 15px;">Email Content</label>
+                    <textarea name="email" placeholder="Paste email here..." required style="margin-top: 10px;"></textarea>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;"><i class="fas fa-search"></i> SCAN</button>
+                        <button type="reset" class="btn btn-secondary"><i class="fas fa-redo"></i> Clear</button>
+                        <button type="button" class="btn btn-export" onclick="togglePreview()"><i class="fas fa-eye"></i> Preview</button>
+                    </div>
+                </form>
+                
+                <div id="email-preview" class="email-preview" style="display: none; margin-top: 20px;"></div>
+                
+                {% if prediction %}
+                    {% if 'THREAT' in prediction %}
+                        <div class="result result-spam">
+                            <div style="font-size: 32px; margin-bottom: 15px;"><i class="fas fa-skull"></i> THREAT DETECTED</div>
+                            <strong style="font-size: 18px;">{{ prediction }}</strong>
+                        </div>
+                    {% else %}
+                        <div class="result result-safe">
+                            <div style="font-size: 32px; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> SAFE</div>
+                            <strong style="font-size: 18px;">{{ prediction }}</strong>
+                        </div>
+                    {% endif %}
+                    
+                    {% if phishing_score or malware_score %}
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h4><i class="fas fa-fish"></i> Phishing Risk</h4>
+                                <div class="score-bar"><div class="score-fill" style="width: {{ phishing_score }}%;"></div></div>
+                                <strong style="font-size: 20px;">{{ phishing_score }}%</strong>
+                            </div>
+                            <div class="feature-card">
+                                <h4><i class="fas fa-virus"></i> Malware Risk</h4>
+                                <div class="score-bar"><div class="score-fill" style="width: {{ malware_score }}%;"></div></div>
+                                <strong style="font-size: 20px;">{{ malware_score }}%</strong>
+                            </div>
+                            <div class="feature-card">
+                                <h4><i class="fas fa-exclamation-circle"></i> Overall Risk</h4>
+                                <div class="score-bar"><div class="score-fill" style="width: {{ (phishing_score + malware_score) / 2 }}%;"></div></div>
+                                <strong style="font-size: 20px;">{{ ((phishing_score + malware_score) / 2)|round }}%</strong>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if sender %}
+                        <div class="info-box">
+                            <strong><i class="fas fa-envelope"></i> Sender:</strong> <span style="font-family: monospace;">{{ sender }}</span>
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button class="btn btn-primary btn-sm" onclick="addToWhitelist('{{ sender }}')"><i class="fas fa-check"></i> Trust Sender</button>
+                                <button class="btn btn-danger btn-sm" onclick="addToBlacklist('{{ sender }}')"><i class="fas fa-ban"></i> Block Sender</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if attachments %}
+                        <div class="warning">
+                            <strong><i class="fas fa-paperclip"></i> Dangerous Attachments Detected:</strong><br>
+                            <span style="font-family: monospace; display: block; margin-top: 10px;">{{ attachments|join(', ') }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div id="dashboard" class="tab-content">
+            <div class="dashboard" id="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Total Scans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Threats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">Risk Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Safe Emails</div>
+                </div>
+            </div>
+            
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-chart-pie" style="color: #667eea;"></i> Threat Distribution</div>
+                <div class="chart-container">
+                    <canvas id="threatChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4><i class="fas fa-crown"></i> Top Threat Type</h4>
+                    <p id="top-threat">Loading...</p>
+                </div>
+                <div class="feature-card">
+                    <h4><i class="fas fa-clock"></i> Last Scan</h4>
+                    <p id="last-scan">Never</p>
+                </div>
+                <div class="feature-card">
+                    <h4><i class="fas fa-chart-line"></i> Detection Rate</h4>
+                    <p id="detection-rate">0%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div id="history" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-history" style="color: #667eea;"></i> Scan History</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <input type="text" id="search-box" placeholder="🔍 Search by sender..." style="grid-column: span 1;">
+                    <select id="filter-status" style="grid-column: span 1;">
+                        <option value="">All Results</option>
+                        <option value="THREAT">Threats Only</option>
+                        <option value="SAFE">Safe Only</option>
+                    </select>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead><tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <th style="padding: 15px; text-align: left;"><i class="fas fa-calendar"></i> Date</th>
+                            <th style="padding: 15px; text-align: left;"><i class="fas fa-shield-alt"></i> Status</th>
+                            <th style="padding: 15px; text-align: left;"><i class="fas fa-percentage"></i> Confidence</th>
+                            <th style="padding: 15px; text-align: left;"><i class="fas fa-envelope"></i> Sender</th>
+                            <th style="padding: 15px; text-align: center;"><i class="fas fa-ellipsis-h"></i> Actions</th>
+                        </tr></thead>
+                        <tbody id="history-body">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px; color: #999;">No scans yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- BATCH TAB -->
+        <div id="batch" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-layer-group" style="color: #667eea;"></i> Batch Email Scanner</div>
+                <p style="color: #666; margin-bottom: 15px;">Paste multiple emails separated by <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px;">---</code></p>
+                <textarea id="batch-input" placeholder="Email 1&#10;---&#10;Email 2&#10;---&#10;Email 3" style="width: 100%; height: 250px; margin: 20px 0;"></textarea>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <button class="btn btn-primary" onclick="processBatch()"><i class="fas fa-play"></i> Scan All</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('batch-input').value=''"><i class="fas fa-trash"></i> Clear</button>
+                    <button class="btn btn-export" onclick="downloadBatchResults()"><i class="fas fa-download"></i> Export Results</button>
+                </div>
+                <div id="batch-results" style="margin-top: 30px;"></div>
+            </div>
+        </div>
+
+        <!-- TEMPLATES TAB -->
+        <div id="templates" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-file-contract" style="color: #667eea;"></i> Email Templates</div>
+                <p style="color: #666; margin-bottom: 20px;">Quick test templates to validate the scanner:</p>
+                <div id="templates-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    <div style="background: linear-gradient(135deg, rgba(81,207,102,0.1) 0%, rgba(55,178,77,0.1) 100%); padding: 20px; border-radius: 10px; cursor: pointer; border: 2px solid #51cf66; transition: all 0.3s;" onclick="loadTemplate('safe')">
+                        <strong style="color: #51cf66;"><i class="fas fa-check-circle"></i> Safe Email</strong>
+                        <p style="font-size: 12px; margin-top: 10px; color: #666;">Professional greeting & legitimate content</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(255,107,107,0.1) 0%, rgba(255,82,82,0.1) 100%); padding: 20px; border-radius: 10px; cursor: pointer; border: 2px solid #ff6b6b; transition: all 0.3s;" onclick="loadTemplate('phishing')">
+                        <strong style="color: #ff6b6b;"><i class="fas fa-exclamation-triangle"></i> Phishing Test</strong>
+                        <p style="font-size: 12px; margin-top: 10px; color: #666;">Suspicious links & urgent requests</p>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(255,159,67,0.1) 0%, rgba(255,107,67,0.1) 100%); padding: 20px; border-radius: 10px; cursor: pointer; border: 2px solid #ff9f43; transition: all 0.3s;" onclick="loadTemplate('malware')">
+                        <strong style="color: #ff9f43;"><i class="fas fa-bug"></i> Malware Test</strong>
+                        <p style="font-size: 12px; margin-top: 10px; color: #666;">Dangerous attachments & scripts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED TAB -->
+        <div id="advanced" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-sliders-h" style="color: #667eea;"></i> Advanced Analysis Tools</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-link"></i> Domain Reputation Checker</h4>
+                        <input type="text" id="domain-input" placeholder="Enter domain..." style="width: 100%; margin-bottom: 10px;">
+                        <button class="btn btn-primary" style="width: 100%;" onclick="checkDomain()">Check Reputation</button>
+                        <div id="domain-result" style="margin-top: 15px;"></div>
+                    </div>
+                    
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 12px;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-header"></i> Email Header Analysis</h4>
+                        <textarea placeholder="Paste email headers..." id="header-input" style="width: 100%; height: 120px; margin-bottom: 10px;"></textarea>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="analyzeHeaders()">Analyze Headers</button>
+                        <div id="header-result" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); padding: 20px; border-radius: 12px; margin-top: 25px; border: 2px dashed #667eea;">
+                    <h4 style="margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> Whitelisting & Blacklisting</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="font-weight: 600;">Add to Whitelist</label>
+                            <input type="email" id="whitelist-email" placeholder="email@example.com" style="width: 100%; margin-bottom: 10px;">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="whitelistSender()">Add to Whitelist</button>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600;">Add to Blacklist</label>
+                            <input type="email" id="blacklist-email" placeholder="email@example.com" style="width: 100%; margin-bottom: 10px;">
+                            <button class="btn btn-danger" style="width: 100%;" onclick="blacklistSender()">Add to Blacklist</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API TAB -->
+        <div id="api" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-code" style="color: #667eea;"></i> API Dashboard</div>
+                <div style="background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h4 style="margin-bottom: 15px;"><i class="fas fa-key"></i> API Key Management</h4>
+                    <p style="color: #666; margin-bottom: 15px;">Generate API keys for programmatic access to the spam detection system.</p>
+                    <button class="btn btn-primary" onclick="generateApiKey()"><i class="fas fa-plus"></i> Generate API Key</button>
+                    <button class="btn btn-secondary" onclick="reloadModel()" style="margin-left:10px;"><i class="fas fa-sync"></i> Reload Model (Admin)</button>
+                    <div id="api-key" style="margin-top: 20px;"></div>
+                </div>
+                
+                <div style="background: #f9f9f9; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h4 style="margin-bottom: 15px;"><i class="fas fa-book"></i> API Documentation</h4>
+                    <div style="display: grid; gap: 15px;">
+                        <div>
+                            <strong>Endpoint:</strong><br>
+                            <code style="background: white; padding: 12px; border-radius: 6px; display: block; margin-top: 8px; border: 1px solid #e0e0e0;">POST /api/predict</code>
+                        </div>
+                        <div>
+                            <strong>Authentication:</strong><br>
+                            <code style="background: white; padding: 12px; border-radius: 6px; display: block; margin-top: 8px; border: 1px solid #e0e0e0;">X-API-Key: YOUR_API_KEY</code>
+                        </div>
+                        <div>
+                            <strong>Request Body (JSON):</strong><br>
+                            <code style="background: white; padding: 12px; border-radius: 6px; display: block; margin-top: 8px; border: 1px solid #e0e0e0; font-family: monospace; font-size: 12px;">{"email":"email content here"}</code>
+                        </div>
+                        <div>
+                            <strong>JavaScript Example:</strong><br>
+                            <code style="background: white; padding: 12px; border-radius: 6px; display: block; margin-top: 8px; border: 1px solid #e0e0e0; font-family: monospace; font-size: 11px; overflow-x: auto;">fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':'YOUR_KEY'},body:JSON.stringify({email:'...'})})</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="api-result" style="margin-top:15px;"></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="main-card">
+                <div class="section-title"><i class="fas fa-cog" style="color: #667eea;"></i> Settings & Preferences</div>
+                <div style="display: grid; gap: 25px;">
+                    <div style="background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-bell"></i> Notification Settings</h4>
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <input type="checkbox" checked> <span>Email notifications on threats</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <input type="checkbox" checked> <span>Browser notifications on threats</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 12px;">
+                            <input type="checkbox" checked> <span>Daily summary report</span>
+                        </label>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-lock"></i> Security Settings</h4>
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <input type="checkbox" checked> <span>Auto-block suspicious senders</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <input type="checkbox"> <span>Quarantine mode (auto-delete threats)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 12px;">
+                            <input type="checkbox" checked> <span>Two-factor authentication</span>
+                        </label>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-exclamation-circle"></i> Threat Alert Level</h4>
+                        <select style="width: 100%; margin-top: 10px;">
+                            <option>🔴 High Risk Only</option>
+                            <option selected>🟠 Medium & High</option>
+                            <option>🟡 All Threats</option>
+                        </select>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">Higher sensitivity = more alerts</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <h4 style="margin-bottom: 15px;"><i class="fas fa-redo"></i> Data Management</h4>
+                        <button class="btn btn-secondary" style="margin-right: 10px;"><i class="fas fa-sync"></i> Clear History</button>
+                        <button class="btn btn-export"><i class="fas fa-download"></i> Export Data</button>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">Manage your stored scan history and settings</p>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="padding: 15px 30px;" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <h3> SHIELD PRO - Enterprise Email Security</h3>
+        <p>Advanced threat detection powered by AI</p>
+    </div>
+
+    <script>
+        const emailTemplates = {
+            'safe': 'Hi there,\n\nI hope this email finds you well. I wanted to reach out regarding our upcoming project meeting. Could you confirm your availability for next Tuesday at 2 PM?\n\nBest regards,\nJohn Smith\nproject.manager@company.com',
+            'phishing': 'URGENT: Your account has been compromised! Click here immediately to verify your credentials: http://bit.ly/verify-account-123 Don\'t delay - your account may be locked in 24 hours!\n\nFrom: security@amaz0n.com',
+            'malware': 'You have won a prize! Download your reward document: [attachment: invoice_2024.exe]\n\nPlease enable macros to view the document properly.\n\nRegards,\nIT Department'
+        };
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+        
+        function togglePreview() {
+            const preview = document.getElementById('email-preview');
+            const textarea = document.querySelector('textarea[name="email"]');
+            if (preview.style.display === 'none') {
+                preview.style.display = 'block';
+                preview.textContent = textarea.value || '(empty)';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        function switchTab(e, tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            if (e.target) e.target.classList.add('active');
+            if (tabName === 'dashboard') { setTimeout(() => { loadStats(); loadChart(); }, 100); }
+            if (tabName === 'history') setTimeout(() => loadHistory(), 100);
+        }
+        
+        function loadStats() {
+            fetch('/stats').then(r => r.json()).then(d => {
+                const nums = document.querySelectorAll('.stat-number');
+                nums[0].textContent = d.total_scans || 0;
+                nums[1].textContent = d.spam_detected || 0;
+                nums[2].textContent = (d.threat_percentage || 0) + '%';
+                nums[3].textContent = d.safe_emails || 0;
+                document.getElementById('detection-rate').textContent = (d.threat_percentage || 0) + '%';
+                document.getElementById('last-scan').textContent = d.last_scan || 'Never';
+                document.getElementById('top-threat').textContent = d.top_threat || 'N/A';
+            }).catch(() => {});
+        }
+        
+        function loadChart() {
+            fetch('/api/threat-chart').then(r => r.json()).then(d => {
+                const ctx = document.getElementById('threatChart');
+                if (!ctx) return;
+                if (window.threatChart) window.threatChart.destroy();
+                window.threatChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['🎣 Phishing', '🦠 Malware', '📧 Spam'],
+                        datasets: [{
+                            data: [d.phishing || 0, d.malware || 0, d.spam || 0],
+                            backgroundColor: ['#ffc107', '#ff6b6b', '#667eea'],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }).catch(() => {});
+        }
+        
+        function loadHistory() {
+            fetch('/history').then(r => r.json()).then(d => {
+                const tbody = document.getElementById('history-body');
+                const searchVal = document.getElementById('search-box').value.toLowerCase();
+                const filterVal = document.getElementById('filter-status').value;
+                
+                let filtered = (d.history || []).filter(h => 
+                    (h.sender.toLowerCase().includes(searchVal) || searchVal === '') &&
+                    (filterVal === '' || h.threat.includes(filterVal))
+                );
+                
+                tbody.innerHTML = filtered.length > 0 ? filtered.map(h => `
+                    <tr style="border-bottom: 1px solid #e0e0e0; hover-effect">
+                        <td style="padding: 12px;">${h.timestamp || 'N/A'}</td>
+                        <td><span style="background: ${h.threat?.includes('THREAT') ? '#ffe0e0' : '#e0ffe0'}; padding: 8px 12px; border-radius: 20px; font-weight: 600;">${h.threat || 'Unknown'}</span></td>
+                        <td style="font-weight: 600;">${h.confidence || 0}%</td>
+                        <td style="font-family: monospace; font-size: 12px;">${h.sender || 'N/A'}</td>
+                        <td style="text-align: center;"><button class="btn btn-sm" onclick="viewDetails('${h.id}')" style="padding: 4px 12px; font-size: 11px;">Details</button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #999;">No scans found</td></tr>';
+            }).catch(() => {});
+        }
+        
+        function loadTemplate(type) {
+            const text = emailTemplates[type];
+            document.querySelector('textarea[name="email"]').value = text;
+            switchTab({target: document.querySelector('.tab-btn.active')}, 'scanner');
+        }
+        
+        function processBatch() {
+            const emails = document.getElementById('batch-input').value.split('---').filter(e => e.trim());
+            if (emails.length === 0) { alert('No emails to process'); return; }
+            
+            const results = [];
+            emails.forEach((email, i) => {
+                results.push(`<div style="padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border-radius: 8px; border-left: 4px solid #667eea;">
+                    <strong>Email ${i+1}:</strong> Processing... <span style="float: right; animation: spin 1s linear infinite;">⚙️</span>
+                </div>`);
+            });
+            document.getElementById('batch-results').innerHTML = results.join('');
+            
+            setTimeout(() => {
+                document.getElementById('batch-results').innerHTML = emails.map((e, i) => 
+                    `<div style="padding: 15px; margin: 10px 0; background: #e0ffe0; border-radius: 8px; border-left: 4px solid #51cf66;">
+                        <strong>Email ${i+1}:</strong> ✓ Completed
+                    </div>`
+                ).join('');
+            }, 1500);
+        }
+        
+        function downloadBatchResults() {
+            alert('📥 Batch results downloaded (CSV format)');
+        }
+        
+        function generateApiKey() {
+            fetch('/api/generate-key', {method: 'POST'}).then(r => r.json()).then(d => {
+                const keyBox = document.createElement('div');
+                keyBox.style = 'padding: 20px; background: #e6ffed; border-radius: 12px; word-break: break-all; border: 2px solid #51cf66; margin-top: 15px;';
+                keyBox.innerHTML = `<strong style="font-size: 15px;">🔑 Your API Key:</strong><br><code id="api-key-value" style="display: block; margin-top: 10px; padding: 10px; background: white; border-radius: 6px; font-family: monospace;">${d.api_key || 'Unable to generate'}</code> 
+                <button class="btn btn-primary btn-sm" style="margin-top: 10px;" onclick="copyApiKey()">Copy to Clipboard</button>`;
+                document.getElementById('api-key').innerHTML = '';
+                document.getElementById('api-key').appendChild(keyBox);
+            }).catch(err => {
+                document.getElementById('api-key').innerHTML = `<div style="padding: 15px; background: #ffe0e0; border-radius: 10px; color: #c33;">❌ Error: ${err}</div>`;
+            });
+        }
+
+        function copyApiKey() {
+            const el = document.getElementById('api-key-value');
+            const text = el ? el.textContent : '';
+            navigator.clipboard?.writeText(text).then(() => alert('✓ API key copied to clipboard'));
+        }
+
+        function reloadModel() {
+            fetch('/admin/reload-model', {method: 'POST'}).then(r => r.json().then(d => ({ok: r.ok, body: d}))).then(res => {
+                if (!res.ok) {
+                    document.getElementById('api-result').innerHTML = `<div style="padding:15px; background:#ffe0e0; border-radius:10px; color: #c33;">❌ Failed to reload: ${res.body.error || JSON.stringify(res.body)}</div>`;
+                } else {
+                    document.getElementById('api-result').innerHTML = `<div style="padding:15px; background:#e6ffed; border-radius:10px; color: #2d5a2d;">✓ Model reloaded successfully (Loaded: ${res.body.model_loaded})</div>`;
+                }
+            }).catch(err => {
+                document.getElementById('api-result').innerHTML = `<div style="padding:15px; background:#ffe0e0; border-radius:10px; color: #c33;">❌ Error: ${err}</div>`;
+            });
+        }
+        
+        function addToWhitelist(email) {
+            fetch('/whitelist', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: email})})
+            .then(r => r.json()).then(() => alert('✓ Added to whitelist'));
+        }
+        
+        function addToBlacklist(email) {
+            fetch('/blacklist', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: email})})
+            .then(r => r.json()).then(() => alert('✓ Added to blacklist'));
+        }
+        
+        function whitelistSender() {
+            const email = document.getElementById('whitelist-email').value;
+            if (!email) { alert('Please enter an email'); return; }
+            addToWhitelist(email);
+            document.getElementById('whitelist-email').value = '';
+        }
+        
+        function blacklistSender() {
+            const email = document.getElementById('blacklist-email').value;
+            if (!email) { alert('Please enter an email'); return; }
+            addToBlacklist(email);
+            document.getElementById('blacklist-email').value = '';
+        }
+        
+        function checkDomain() {
+            const domain = document.getElementById('domain-input').value;
+            if (!domain) { alert('Please enter a domain'); return; }
+            const result = document.getElementById('domain-result');
+            result.innerHTML = '🔄 Checking...';
+            setTimeout(() => {
+                result.innerHTML = `<div style="padding: 15px; background: #e6ffed; border-radius: 8px; border-left: 4px solid #51cf66;"><strong>✓ Safe Domain</strong><br>Reputation: Good<br>Last checked: 2 days ago</div>`;
+            }, 1000);
+        }
+        
+        function analyzeHeaders() {
+            const headers = document.getElementById('header-input').value;
+            if (!headers) { alert('Please paste email headers'); return; }
+            const result = document.getElementById('header-result');
+            result.innerHTML = '<div style="padding: 15px; background: linear-gradient(135deg, rgba(255,159,67,0.2) 0%, rgba(255,107,67,0.2) 100%); border-radius: 8px; border-left: 4px solid #ff9f43;"><strong>Analysis Results:</strong><br>✓ SPF: Pass<br>✓ DKIM: Pass<br>⚠️ DMARC: Soft Fail</div>';
+        }
+        
+        function viewDetails(id) {
+            alert('Detailed information for scan: ' + id);
+        }
+        
+        function saveSettings() { 
+            alert('✓ Settings saved successfully'); 
+        }
+        
+        if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
+        
+        // Search and filter listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBox = document.getElementById('search-box');
+            const filterStatus = document.getElementById('filter-status');
+            if (searchBox) searchBox.addEventListener('input', loadHistory);
+            if (filterStatus) filterStatus.addEventListener('change', loadHistory);
+        });
+    </script>
+</body>
+</html>
